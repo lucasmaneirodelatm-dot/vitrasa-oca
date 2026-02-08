@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="es" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oca Vitrasa</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&amp;family=Nunito:wght@400;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    html, body { box-sizing: border-box; height: 100%; width: 100%; }
+    * { box-sizing: border-box; }
+    .font-title { font-family: 'Fredoka One', cursive; }
+    .font-body { font-family: 'Nunito', sans-serif; }
+    @keyframes bounce-dice { 0%, 100% { transform: scale(1) rotate(0deg); } 25% { transform: scale(1.1) rotate(-5deg); } 50% { transform: scale(0.95) rotate(5deg); } 75% { transform: scale(1.05) rotate(-3deg); } }
+    @keyframes slide-in { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .dice-rolling { animation: bounce-dice 0.5s ease-in-out; }
+    .modal-setup { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 16px; animation: slide-in 0.3s ease-out; }
+    .modal-content { background: linear-gradient(135deg, rgba(30, 58, 138, 0.98) 0%, rgba(55, 65, 81, 0.98) 100%); border: 3px solid rgba(255,255,255,0.3); border-radius: 24px; padding: 32px; max-width: 700px; width: 100%; max-height: 90vh; overflow-y: auto; animation: slide-in 0.4s ease-out; }
+    .modal-title { font-size: 32px; font-weight: bold; color: white; margin-bottom: 32px; text-align: center; }
+    .player-config-card { background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); border-radius: 16px; padding: 24px; margin-bottom: 20px; animation: slide-in 0.4s ease-out; }
+    .config-label { color: #bfdbfe; font-weight: bold; font-size: 14px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .text-input { width: 100%; padding: 12px 16px; border: 2px solid rgba(255,255,255,0.2); border-radius: 10px; background: rgba(255,255,255,0.1); color: white; font-size: 16px; font-weight: bold; transition: all 0.2s; font-family: 'Nunito', sans-serif; }
+    .text-input:focus { outline: none; border-color: #22c55e; background: rgba(255,255,255,0.15); box-shadow: 0 0 12px rgba(34, 197, 94, 0.3); }
+    .avatar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .avatar-option { aspect-ratio: 1; border-radius: 12px; border: 4px solid transparent; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; font-size: 32px; background: rgba(255,255,255,0.1); }
+    .avatar-option:hover { transform: scale(1.08); border-color: rgba(255,255,255,0.4); }
+    .avatar-option.selected { border-color: #22c55e; box-shadow: 0 0 20px rgba(34, 197, 94, 0.8); transform: scale(1.1); }
+    .color-option { width: 50px; height: 50px; border-radius: 10px; border: 4px solid transparent; cursor: pointer; transition: all 0.3s; }
+    .color-option:hover { transform: scale(1.1); border-color: rgba(255,255,255,0.4); }
+    .color-option.selected { border-color: white; box-shadow: 0 0 15px rgba(255,255,255,0.6); transform: scale(1.15); }
+    .num-players-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+    .num-player-btn { padding: 16px; border-radius: 12px; border: 3px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: white; font-weight: bold; font-size: 20px; cursor: pointer; transition: all 0.3s; }
+    .num-player-btn:hover { transform: scale(1.05); border-color: rgba(255,255,255,0.4); }
+    .num-player-btn.selected { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); border-color: #22c55e; box-shadow: 0 0 20px rgba(34, 197, 94, 0.5); transform: scale(1.1); }
+    .btn-start { width: 100%; padding: 18px 32px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; font-weight: bold; font-size: 18px; border-radius: 14px; border: none; cursor: pointer; transition: all 0.3s; margin-top: 32px; }
+    .btn-start:hover:not(:disabled) { transform: translateY(-2px); }
+    .game-layout { display: grid; grid-template-columns: 1fr 340px; gap: 16px; height: 100%; padding: 16px; }
+    .board-section { background: linear-gradient(135deg, rgba(30, 58, 138, 0.4) 0%, rgba(55, 65, 81, 0.4) 100%); border: 2px solid rgba(255,255,255,0.15); border-radius: 16px; padding: 16px; overflow: hidden; display: flex; flex-direction: column; }
+    .board-title { font-size: 18px; font-weight: bold; color: white; margin-bottom: 12px; }
+    .board-container { flex: 1; overflow: auto; background: linear-gradient(135deg, rgba(15, 23, 42, 0.5) 0%, rgba(30, 27, 60, 0.5) 100%); border-radius: 12px; padding: 12px; }
+    .route-grid { display: grid; grid-template-columns: repeat(9, 1fr); gap: 8px; auto-rows: auto; }
+    .station-cell { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 6px; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; text-align: center; }
+    .station-cell:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3); transform: scale(1.05); }
+    .station-cell.special { background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(239, 68, 68, 0.2)); border-color: rgba(251, 191, 36, 0.6); }
+    .station-num { font-size: 9px; color: #bfdbfe; font-weight: bold; }
+    .station-name { font-size: 8px; color: white; font-weight: bold; margin: 2px 0; line-height: 1; }
+    .station-icon { font-size: 14px; margin: 2px 0; }
+    .player-tokens { display: flex; gap: 2px; margin-top: 2px; justify-content: center; flex-wrap: wrap; }
+    .token-small { width: 12px; height: 12px; border-radius: 50%; border: 1px solid white; background-size: cover; background-position: center; }
+    .turn-panel { background: linear-gradient(135deg, rgba(30, 58, 138, 0.5) 0%, rgba(55, 65, 81, 0.5) 100%); border: 2px solid rgba(255,255,255,0.2); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; max-height: 100%; overflow-y: auto; }
+    .turn-header { text-align: center; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 2px solid rgba(255,255,255,0.1); }
+    .turn-label { color: #bfdbfe; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .player-avatar-large { width: 80px; height: 80px; border-radius: 50%; border: 4px solid white; background-size: cover; background-position: center; margin: 0 auto 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 40px; }
+    .player-name-turn { font-size: 22px; font-weight: bold; color: white; margin-bottom: 4px; word-break: break-word; }
+    .player-position { font-size: 14px; color: #86efac; font-weight: bold; }
+    .station-info { font-size: 12px; color: #bfdbfe; margin-top: 8px; }
+    .dice-container { background: rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; margin: 16px 0; text-align: center; }
+    .dice-display { display: flex; justify-content: center; align-items: center; gap: 12px; margin: 12px 0; }
+    .dice-value { width: 50px; height: 50px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; }
+    .dice-operator { color: white; font-weight: bold; font-size: 18px; }
+    .total-value { width: 50px; height: 50px; background: #fbbf24; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; color: #111827; border: 2px solid white; }
+    .btn-roll { width: 100%; padding: 14px; background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); color: #111827; font-weight: bold; border-radius: 10px; border: none; cursor: pointer; transition: all 0.3s; font-size: 16px; margin-bottom: 12px; }
+    .btn-roll:hover:not(:disabled) { transform: translateY(-2px); }
+    .btn-roll:disabled { opacity: 0.5; cursor: not-allowed; }
+    .message-box { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 12px; color: #dbeafe; font-size: 13px; line-height: 1.5; min-height: 60px; max-height: 100px; overflow-y: auto; margin-bottom: 12px; }
+    .scoreboard-item { background: rgba(255,255,255,0.08); border-left: 3px solid; border-radius: 6px; padding: 10px; margin-bottom: 8px; display: flex; gap: 10px; align-items: center; }
+    .scoreboard-token { width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; background-size: cover; background-position: center; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+    .scoreboard-info { flex: 1; min-width: 0; }
+    .scoreboard-name { font-size: 12px; color: white; font-weight: bold; word-break: break-word; }
+    .scoreboard-pos { font-size: 13px; color: #86efac; font-weight: bold; }
+    .btn-end-turn { width: 100%; padding: 14px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; font-weight: bold; border-radius: 10px; border: none; cursor: pointer; transition: all 0.3s; font-size: 16px; margin-top: auto; }
+    .btn-end-turn:hover:not(:disabled) { transform: translateY(-2px); }
+    .btn-end-turn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-reset { width: 100%; padding: 10px; background: rgba(239, 68, 68, 0.3); color: #fca5a5; font-weight: bold; border-radius: 8px; border: 2px solid rgba(239, 68, 68, 0.5); cursor: pointer; transition: all 0.3s; font-size: 12px; margin-top: 8px; }
+    .btn-reset:hover { background: rgba(239, 68, 68, 0.4); border-color: rgba(239, 68, 68, 0.7); }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="font-body bg-gradient-to-br from-blue-900 via-indigo-900 to-blue-800 overflow-hidden w-full h-full">
+  <script>
+    // ========== BASE DE DATOS - 45 LÍNEAS + 18 EVENTOS ESPECIALES ==========
+    const DATABASE = {
+      lines: [
+        { name: 'L1 Centro', icon: '🚌', image: 'https://images.unsplash.com/photo-1534948751033-0c4f9d6391b8?w=200&h=200&fit=crop' },
+        { name: 'L2 Este', icon: '🚍', image: 'https://images.unsplash.com/photo-1544716278-ca5e3af4abd8?w=200&h=200&fit=crop' },
+        { name: 'L3 Sur', icon: '🚌', image: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=200&h=200&fit=crop' },
+        { name: 'L4 Oeste', icon: '🚍', image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=200&h=200&fit=crop' },
+        { name: 'L5 Litoral', icon: '🚌', image: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=200&h=200&fit=crop' },
+        { name: 'L6 Nord', icon: '🚍', image: 'https://images.unsplash.com/photo-1487180144351-b8472da7d491?w=200&h=200&fit=crop' },
+        { name: 'L7 Comercial', icon: '🚌', image: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=200&h=200&fit=crop' },
+        { name: 'L8 Sanitaria', icon: '🚍', image: 'https://images.unsplash.com/photo-1587280482051-921e6a9af914?w=200&h=200&fit=crop' },
+        { name: 'L9 Industrial', icon: '🚌', image: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?w=200&h=200&fit=crop' },
+        { name: 'L10 Playas', icon: '🚍', image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=200&h=200&fit=crop' },
+        { name: 'L11 Verde', icon: '🚌', image: 'https://images.unsplash.com/photo-1469022563149-aa64dbd37dae?w=200&h=200&fit=crop' },
+        { name: 'L12 Universitaria', icon: '🚍', image: 'https://images.unsplash.com/photo-1486320291840-c3fee1d55d69?w=200&h=200&fit=crop' },
+        { name: 'L13 Noche', icon: '🚌', image: 'https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=200&h=200&fit=crop' },
+        { name: 'L14 Expreso', icon: '🚍', image: 'https://images.unsplash.com/photo-1495537821757-a1efb6729352?w=200&h=200&fit=crop' },
+        { name: 'L15 Residencial', icon: '🚌', image: 'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=200&h=200&fit=crop' },
+        { name: 'L16 Suburbana', icon: '🚍', image: 'https://images.unsplash.com/photo-1486451543551-8225441a6461?w=200&h=200&fit=crop' },
+        { name: 'L17 Museo', icon: '🚌', image: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=200&h=200&fit=crop' },
+        { name: 'L18 Mercado', icon: '🚍', image: 'https://images.unsplash.com/photo-1488459716781-6f3ee3a3471b?w=200&h=200&fit=crop' },
+        { name: 'L19 Deportes', icon: '🚌', image: 'https://images.unsplash.com/photo-1514782831058-e87f523891ad?w=200&h=200&fit=crop' },
+        { name: 'L20 Turismo', icon: '🚍', image: 'https://images.unsplash.com/photo-1493246507139-91e8fad9978e?w=200&h=200&fit=crop' },
+        { name: 'L21 Puerto', icon: '🚌', image: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=200&h=200&fit=crop' },
+        { name: 'L22 Aerobus', icon: '🚍', image: 'https://images.unsplash.com/photo-1534948751033-0c4f9d6391b8?w=200&h=200&fit=crop' },
+        { name: 'L23 Ferrocarril', icon: '🚌', image: 'https://images.unsplash.com/photo-1486152873656-13f2f3a56d59?w=200&h=200&fit=crop' },
+        { name: 'L24 Hospital', icon: '🚍', image: 'https://images.unsplash.com/photo-1587280482051-921e6a9af914?w=200&h=200&fit=crop' },
+        { name: 'L25 Educación', icon: '🚌', image: 'https://images.unsplash.com/photo-1507842217343-583f7270bfba?w=200&h=200&fit=crop' },
+        { name: 'L26 Cultura', icon: '🚍', image: 'https://images.unsplash.com/photo-1512207736139-ca2e55ad6a23?w=200&h=200&fit=crop' },
+        { name: 'L27 Seguridad', icon: '🚌', image: 'https://images.unsplash.com/photo-1518625061638-68516c789721?w=200&h=200&fit=crop' },
+        { name: 'L28 Parques', icon: '🚍', image: 'https://images.unsplash.com/photo-1469022563149-aa64dbd37dae?w=200&h=200&fit=crop' },
+        { name: 'L29 Comercial', icon: '🚌', image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=200&h=200&fit=crop' },
+        { name: 'L30 Vivienda', icon: '🚍', image: 'https://images.unsplash.com/photo-1486320291840-c3fee1d55d69?w=200&h=200&fit=crop' },
+        { name: 'L31 Logística', icon: '🚌', image: 'https://images.unsplash.com/photo-1537050487889-6625a3a7991c?w=200&h=200&fit=crop' },
+        { name: 'L32 Transporte', icon: '🚍', image: 'https://images.unsplash.com/photo-1465056836342-0675e7b6d565?w=200&h=200&fit=crop' },
+        { name: 'L33 Emergencia', icon: '🚌', image: 'https://images.unsplash.com/photo-1494620502332-ae1bcf2b5dba?w=200&h=200&fit=crop' },
+        { name: 'L34 Especial', icon: '🚍', image: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=200&h=200&fit=crop' },
+        { name: 'L35 Festival', icon: '🚌', image: 'https://images.unsplash.com/photo-1514782831058-e87f523891ad?w=200&h=200&fit=crop' },
+        { name: 'L36 Nocturna', icon: '🚍', image: 'https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=200&h=200&fit=crop' },
+        { name: 'L37 Rural', icon: '🚌', image: 'https://images.unsplash.com/photo-1470252649378-9c29740ff023?w=200&h=200&fit=crop' },
+        { name: 'L38 Montaña', icon: '🚍', image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=200&h=200&fit=crop' },
+        { name: 'L39 Intercambia', icon: '🚌', image: 'https://images.unsplash.com/photo-1465056836342-0675e7b6d565?w=200&h=200&fit=crop' },
+        { name: 'L40 Acceso', icon: '🚍', image: 'https://images.unsplash.com/photo-1487180144351-b8472da7d491?w=200&h=200&fit=crop' },
+        { name: 'L41 Escolar', icon: '🚌', image: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=200&h=200&fit=crop' },
+        { name: 'L42 Obrera', icon: '🚍', image: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?w=200&h=200&fit=crop' },
+        { name: 'L43 Matinal', icon: '🚌', image: 'https://images.unsplash.com/photo-1511337895822-482457697f83?w=200&h=200&fit=crop' },
+        { name: 'L44 Vespertina', icon: '🚍', image: 'https://images.unsplash.com/photo-1544716278-ca5e3af4abd8?w=200&h=200&fit=crop' },
+        { name: 'L45 Tardía', icon: '🚌', image: 'https://images.unsplash.com/photo-1487180144351-b8472da7d491?w=200&h=200&fit=crop' }
+      ],
+      specialEvents: [
+        { position: 2, type: 'bonus', jumps: 1, name: '🎫', message: 'Primer viaje! Avanzas 1' },
+        { position: 5, type: 'delay', turns: 1, name: '🚨', message: 'Atasco. Esperas 1 turno' },
+        { position: 8, type: 'again', name: '🍀', message: 'Tira de nuevo!' },
+        { position: 10, type: 'bonus', jumps: 2, name: '💨', message: 'Avanzas 2!' },
+        { position: 12, type: 'delay', turns: 1, name: '📍', message: 'Parada técnica. Esperas 1' },
+        { position: 15, type: 'delay', turns: 2, name: '🔧', message: 'Mantenimiento. Esperas 2' },
+        { position: 20, type: 'bonus', jumps: 3, name: '⭐', message: 'Avanzas 3!' },
+        { position: 22, type: 'bonus', jumps: 2, name: '⚡', message: 'Rápido! Avanzas 2' },
+        { position: 25, type: 'again', name: '👵', message: 'Tira de nuevo!' },
+        { position: 30, type: 'delay', turns: 1, name: '🚧', message: 'Desvío. Esperas 1' },
+        { position: 35, type: 'bonus', jumps: 4, name: '🏖️', message: 'Avanzas 4!' },
+        { position: 40, type: 'again', name: '🎉', message: 'Tira de nuevo!' },
+        { position: 45, type: 'delay', turns: 2, name: '⚠️', message: 'Obras. Esperas 2' },
+        { position: 50, type: 'bonus', jumps: 2, name: '🚀', message: 'Avanzas 2!' },
+        { position: 55, type: 'again', name: '🌟', message: 'Tira de nuevo!' },
+        { position: 58, type: 'delay', turns: 1, name: '🚨', message: 'Alerta. Esperas 1' },
+        { position: 60, type: 'bonus', jumps: 3, name: '💫', message: 'Avanzas 3!' },
+        { position: 63, type: 'final', name: '🏁', message: '¡Cocheras Vitrasa!' }
+      ],
+      playerAvatars: [
+        { emoji: '🚌', name: 'Autobús Clásico', image: 'https://images.unsplash.com/photo-1534948751033-0c4f9d6391b8?w=200&h=200&fit=crop' },
+        { emoji: '🚍', name: 'Bus Moderno', image: 'https://images.unsplash.com/photo-1544716278-ca5e3af4abd8?w=200&h=200&fit=crop' },
+        { emoji: '🚐', name: 'Microbus', image: 'https://images.unsplash.com/photo-1487180144351-b8472da7d491?w=200&h=200&fit=crop' },
+        { emoji: '🚛', name: 'Transporte', image: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=200&h=200&fit=crop' },
+        { emoji: '🚓', name: 'Emergencia', image: 'https://images.unsplash.com/photo-1494620502332-ae1bcf2b5dba?w=200&h=200&fit=crop' },
+        { emoji: '✈️', name: 'Aviación', image: 'https://images.unsplash.com/photo-1446941364317-29f91fcfe333?w=200&h=200&fit=crop' },
+        { emoji: '🚂', name: 'Ferrocarril', image: 'https://images.unsplash.com/photo-1487180144351-b8472da7d491?w=200&h=200&fit=crop' },
+        { emoji: '🚑', name: 'Ambulancia', image: 'https://images.unsplash.com/photo-1587280482051-921e6a9af914?w=200&h=200&fit=crop' }
+      ],
+      playerColors: ['#ef4444', '#3b82f6', '#22c55e', '#f59e0b', '#ec4899', '#06b6d4']
+    };
+    // ========== FIN BASE DE DATOS ==========
+
+    function getLineInfo(position) {
+      const lineIndex = (position - 1) % 45;
+      return DATABASE.lines[lineIndex];
+    }
+
+    function isSpecialPosition(position) {
+      return DATABASE.specialEvents.find(e => e.position === position);
+    }
+
+    function getPlayerAvatarImage(avatar) {
+      const found = DATABASE.playerAvatars.find(a => a.emoji === avatar);
+      return found ? found.image : '';
+    }
+
+    // ========== FUNCIONES DE ALMACENAMIENTO ==========
+    function saveGameState() {
+      localStorage.setItem('rutaVitrasa_gameState', JSON.stringify(gameState));
+    }
+
+    function loadGameState() {
+      const saved = localStorage.getItem('rutaVitrasa_gameState');
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch (e) {
+          console.error('Error al cargar partida guardada', e);
+          return null;
+        }
+      }
+      return null;
+    }
+
+    function hasAutoSave() {
+      return localStorage.getItem('rutaVitrasa_gameState') !== null;
+    }
+
+    function deleteAutoSave() {
+      localStorage.removeItem('rutaVitrasa_gameState');
+    }
+  </script>
+  <div id="app" class="w-full h-full flex flex-col">
+   <div id="setup-modal" class="modal-setup">
+    <div class="modal-content">
+     <div class="modal-title font-title">
+      🚌 Bienvenidos a Ruta Vitrasa
+     </div>
+     <div class="config-section">
+      <div class="config-label">
+       ¿Cuántos pasajeros viajarán?
+      </div>
+      <div class="num-players-grid"><button class="num-player-btn" onclick="selectPlayers(2)" data-players="2">2</button> <button class="num-player-btn" onclick="selectPlayers(3)" data-players="3">3</button> <button class="num-player-btn" onclick="selectPlayers(4)" data-players="4">4</button> <button class="num-player-btn" onclick="selectPlayers(5)" data-players="5">5</button> <button class="num-player-btn" onclick="selectPlayers(6)" data-players="6">6</button>
+      </div>
+     </div>
+     <div id="players-config-container"></div><button class="btn-start" onclick="startGame()">🚌 ¡Iniciar Viaje!</button>
+    </div>
+   </div>
+   <div id="game-screen" class="hidden flex-1 flex flex-col w-full h-full">
+    <div class="bg-gradient-to-r from-blue-900/50 to-indigo-900/50 border-b-2 border-white/10 px-4 py-3">
+     <h1 id="game-title" class="font-title text-3xl text-white text-center drop-shadow-lg">🚌 Ruta Vitrasa</h1>
+     <p id="game-subtitle" class="text-center text-blue-200 text-xs mt-1">Completa las 63 paradas de transporte</p>
+    </div>
+    <div class="game-layout flex-1 overflow-hidden">
+     <div class="board-section">
+      <div class="board-title">
+       🗺️ Tablero - 63 Casillas
+      </div>
+      <div class="board-container">
+       <div class="route-grid" id="route-grid"></div>
+      </div>
+     </div>
+     <div class="turn-panel">
+      <div class="turn-header">
+       <div class="turn-label">
+        Turno Actual
+       </div>
+       <div id="turn-avatar" class="player-avatar-large"></div>
+       <div id="turn-name" class="player-name-turn"></div>
+       <div id="turn-position" class="player-position"></div>
+       <div id="turn-station" class="station-info"></div>
+      </div>
+      <div class="dice-container">
+       <div style="color: #bfdbfe; font-size: 12px; font-weight: bold;">
+        Tirada de Dados
+       </div>
+       <div class="dice-display">
+        <div id="dice1" class="dice-value">
+         🎲
+        </div>
+        <div class="dice-operator">
+         +
+        </div>
+        <div id="dice2" class="dice-value">
+         🎲
+        </div>
+        <div class="dice-operator">
+         =
+        </div>
+        <div id="total" class="total-value">
+         0
+        </div>
+       </div><button id="roll-btn" class="btn-roll" onclick="rollDice()">🎲 Tirar</button>
+      </div>
+      <div id="message" class="message-box"></div>
+      <div style="flex: 1; overflow-y: auto; margin-bottom: 12px;">
+       <div style="color: #bfdbfe; font-size: 12px; font-weight: bold; margin-bottom: 8px;">
+        📊 Posiciones
+       </div>
+       <div id="scoreboard"></div>
+      </div><button id="end-turn-btn" class="btn-end-turn" onclick="endTurn()" disabled>✅ Finalizar Turno</button> <button class="btn-reset" onclick="resetGame()">🔄 Nueva Partida</button>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      game_title: "Ruta Vitrasa",
+      game_subtitle: "Completa las 63 paradas de transporte"
+    };
+    let config = { ...defaultConfig };
+
+    let gameState = {
+      numPlayers: 2,
+      players: [],
+      currentPlayer: 0,
+      gameStarted: false,
+      canRoll: true,
+      turnsToSkip: {},
+      diceRolled: false
+    };
+
+    function selectPlayers(num) {
+      gameState.numPlayers = num;
+      document.querySelectorAll('.num-player-btn').forEach(btn => {
+        btn.classList.toggle('selected', parseInt(btn.dataset.players) === num);
+      });
+      renderPlayerConfig();
+    }
+
+    function renderPlayerConfig() {
+      const container = document.getElementById('players-config-container');
+      container.innerHTML = '';
+
+      for (let i = 0; i < gameState.numPlayers; i++) {
+        const card = document.createElement('div');
+        card.className = 'player-config-card';
+        card.innerHTML = `
+          <div class="config-section">
+            <div class="config-label">Pasajero ${i + 1}</div>
+            <input type="text" class="text-input player-name-input" id="name-${i}" placeholder="Nombre" value="Pasajero ${i + 1}" maxlength="20">
+          </div>
+          <div class="config-section">
+            <div class="config-label">Avatar</div>
+            <div class="avatar-grid" id="avatars-${i}"></div>
+          </div>
+          <div class="config-section">
+            <div class="config-label">Color</div>
+            <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;" id="colors-${i}"></div>
+          </div>
+        `;
+
+        const avatarContainer = card.querySelector(`#avatars-${i}`);
+        DATABASE.playerAvatars.forEach((avatar, idx) => {
+          const btn = document.createElement('div');
+          btn.className = 'avatar-option' + (idx === 0 ? ' selected' : '');
+          btn.textContent = avatar.emoji;
+          btn.dataset.emoji = avatar.emoji;
+          btn.onclick = () => {
+            document.querySelectorAll(`#avatars-${i} .avatar-option`).forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+          };
+          avatarContainer.appendChild(btn);
+        });
+
+        const colorContainer = card.querySelector(`#colors-${i}`);
+        DATABASE.playerColors.forEach((color, idx) => {
+          const btn = document.createElement('div');
+          btn.className = 'color-option' + (idx === i % DATABASE.playerColors.length ? ' selected' : '');
+          btn.style.backgroundColor = color;
+          btn.dataset.color = color;
+          btn.onclick = () => {
+            document.querySelectorAll(`#colors-${i} .color-option`).forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+          };
+          colorContainer.appendChild(btn);
+        });
+
+        container.appendChild(card);
+      }
+    }
+
+    function startGame() {
+      gameState.players = [];
+
+      for (let i = 0; i < gameState.numPlayers; i++) {
+        const nameInput = document.getElementById(`name-${i}`);
+        const selectedAvatar = document.querySelector(`#avatars-${i} .avatar-option.selected`);
+        const selectedColor = document.querySelector(`#colors-${i} .color-option.selected`);
+
+        gameState.players.push({
+          id: i,
+          name: nameInput.value || `Pasajero ${i + 1}`,
+          avatar: selectedAvatar.dataset.emoji,
+          color: selectedColor.dataset.color,
+          position: 1
+        });
+      }
+
+      gameState.currentPlayer = 0;
+      gameState.gameStarted = true;
+      gameState.canRoll = true;
+      gameState.turnsToSkip = {};
+      gameState.diceRolled = false;
+
+      document.getElementById('setup-modal').style.display = 'none';
+      document.getElementById('game-screen').classList.remove('hidden');
+
+      renderBoard();
+      updateDisplay();
+      showMessage(`🚌 ¡Bienvenidos! ${gameState.players[0].name}, ¡tira!`);
+    }
+
+    function renderBoard() {
+      const grid = document.getElementById('route-grid');
+      grid.innerHTML = '';
+
+      for (let i = 1; i <= 63; i++) {
+        const isSpecial = isSpecialPosition(i);
+        const line = getLineInfo(i);
+
+        const cell = document.createElement('div');
+        cell.className = 'station-cell' + (isSpecial ? ' special' : '');
+        cell.dataset.stationId = i - 1;
+        cell.innerHTML = `
+          <div class="station-num">#${i}</div>
+          <div class="station-icon">${line.icon}</div>
+          <div class="station-name">${line.name}</div>
+          <div class="player-tokens" data-tokens="${i - 1}"></div>
+        `;
+        grid.appendChild(cell);
+      }
+
+      updateTokensDisplay();
+    }
+
+    function updateTokensDisplay() {
+      document.querySelectorAll('[data-tokens]').forEach(container => {
+        container.innerHTML = '';
+      });
+
+      gameState.players.forEach(player => {
+        const container = document.querySelector(`[data-tokens="${player.position - 1}"]`);
+        if (container) {
+          const token = document.createElement('div');
+          token.className = 'token-small';
+          token.style.backgroundColor = player.color;
+          token.title = player.name;
+          container.appendChild(token);
+        }
+      });
+    }
+
+    function updateDisplay() {
+      const player = gameState.players[gameState.currentPlayer];
+      const line = getLineInfo(player.position);
+
+      document.getElementById('turn-avatar').style.backgroundColor = player.color;
+      document.getElementById('turn-avatar').textContent = player.avatar;
+      document.getElementById('turn-name').textContent = player.name;
+      document.getElementById('turn-position').textContent = `Parada ${player.position}/63`;
+      document.getElementById('turn-station').textContent = `📍 ${line.name}`;
+
+      updateScoreboard();
+      updateTokensDisplay();
+    }
+
+    function updateScoreboard() {
+      const scoreboard = document.getElementById('scoreboard');
+      scoreboard.innerHTML = gameState.players
+        .map((p, idx) => `
+          <div class="scoreboard-item" style="border-color: ${p.color}; ${gameState.currentPlayer === idx ? 'background: rgba(255,255,255,0.15);' : ''}">
+            <div class="scoreboard-token" style="background-color: ${p.color};">${p.avatar}</div>
+            <div class="scoreboard-info">
+              <div class="scoreboard-name">${p.name}</div>
+              <div class="scoreboard-pos">${p.position}/63</div>
+            </div>
+          </div>
+        `)
+        .join('');
+    }
+
+    function showMessage(msg) {
+      document.getElementById('message').textContent = msg;
+    }
+
+    async function rollDice() {
+      if (!gameState.canRoll || gameState.diceRolled) return;
+
+      const player = gameState.players[gameState.currentPlayer];
+
+      if (gameState.turnsToSkip[player.id] > 0) {
+        gameState.turnsToSkip[player.id]--;
+        showMessage(`⏳ ${player.name} espera. Turnos: ${gameState.turnsToSkip[player.id]}`);
+        document.getElementById('end-turn-btn').disabled = false;
+        return;
+      }
+
+      gameState.canRoll = false;
+      gameState.diceRolled = true;
+
+      const dice1El = document.getElementById('dice1');
+      const dice2El = document.getElementById('dice2');
+      const totalEl = document.getElementById('total');
+      const rollBtn = document.getElementById('roll-btn');
+
+      rollBtn.disabled = true;
+      dice1El.classList.add('dice-rolling');
+      dice2El.classList.add('dice-rolling');
+
+      await new Promise(r => setTimeout(r, 600));
+
+      const dice1 = Math.floor(Math.random() * 6) + 1;
+      const dice2 = Math.floor(Math.random() * 6) + 1;
+      const total = dice1 + dice2;
+
+      dice1El.textContent = dice1;
+      dice2El.textContent = dice2;
+      totalEl.textContent = total;
+      dice1El.classList.remove('dice-rolling');
+      dice2El.classList.remove('dice-rolling');
+
+      let newPosition = player.position + total;
+
+      if (newPosition > 63) {
+        newPosition = 63 - (newPosition - 63);
+        showMessage(`🔙 ¡Te pasaste! Rebotando a parada ${newPosition}`);
+      }
+
+      player.position = newPosition;
+      updateDisplay();
+      saveGameState();
+
+      await new Promise(r => setTimeout(r, 800));
+
+      if (player.position === 63) {
+        showMessage(`🏆 ¡${player.name} GANÓ!`);
+        gameState.canRoll = false;
+        rollBtn.disabled = true;
+        document.getElementById('end-turn-btn').disabled = true;
+        return;
+      }
+
+      await handleSpecialCell(player);
+
+      rollBtn.style.display = 'none';
+      document.getElementById('end-turn-btn').disabled = false;
+    }
+
+    async function handleSpecialCell(player) {
+      const special = isSpecialPosition(player.position);
+
+      if (!special) {
+        const line = getLineInfo(player.position);
+        showMessage(`📍 ${player.name} en ${line.name}`);
+        return;
+      }
+
+      switch(special.type) {
+        case 'delay':
+          showMessage(`${special.name} ${special.message}`);
+          gameState.turnsToSkip[player.id] = special.turns;
+          break;
+
+        case 'bonus':
+          showMessage(`${special.name} ${special.message}`);
+          player.position = Math.min(player.position + special.jumps, 63);
+          updateDisplay();
+          saveGameState();
+          await new Promise(r => setTimeout(r, 600));
+          break;
+
+        case 'again':
+          showMessage(`${special.name} ${special.message}`);
+          gameState.canRoll = true;
+          gameState.diceRolled = false;
+          document.getElementById('end-turn-btn').disabled = true;
+          break;
+
+        case 'final':
+          showMessage(`🏁 ${special.message}`);
+          break;
+      }
+    }
+
+    function endTurn() {
+      gameState.currentPlayer = (gameState.currentPlayer + 1) % gameState.numPlayers;
+      gameState.canRoll = true;
+      gameState.diceRolled = false;
+
+      document.getElementById('dice1').textContent = '🎲';
+      document.getElementById('dice2').textContent = '🎲';
+      document.getElementById('total').textContent = '0';
+      document.getElementById('roll-btn').style.display = 'block';
+      document.getElementById('roll-btn').disabled = false;
+      document.getElementById('end-turn-btn').style.display = 'block';
+      document.getElementById('end-turn-btn').disabled = true;
+
+      updateDisplay();
+      saveGameState();
+
+      const player = gameState.players[gameState.currentPlayer];
+      if (gameState.turnsToSkip[player.id] > 0) {
+        showMessage(`⏳ Turno de ${player.name} - Espera ${gameState.turnsToSkip[player.id]} turno(s)`);
+      } else {
+        showMessage(`🎯 Turno de ${player.name}. ¡Tira!`);
+      }
+    }
+
+    function resetGame() {
+      gameState.gameStarted = false;
+      gameState.diceRolled = false;
+      deleteAutoSave();
+      document.getElementById('setup-modal').style.display = 'flex';
+      document.getElementById('game-screen').classList.add('hidden');
+      selectPlayers(2);
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: (cfg) => {
+          document.getElementById('game-title').textContent = '🚌 ' + (cfg.game_title || defaultConfig.game_title);
+          document.getElementById('game-subtitle').textContent = cfg.game_subtitle || defaultConfig.game_subtitle;
+        },
+        mapToCapabilities: () => ({
+          recolorables: [],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (cfg) => new Map([
+          ["game_title", cfg.game_title || defaultConfig.game_title],
+          ["game_subtitle", cfg.game_subtitle || defaultConfig.game_subtitle]
+        ])
+      });
+    }
+
+    selectPlayers(2);
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9cab2562906e0325',t:'MTc3MDU1MzkwNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
