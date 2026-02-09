@@ -3,7 +3,7 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Oca Vitrasa</title>
+  <title>Ruta Vitrasa</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&amp;family=Nunito:wght@400;600;700&amp;display=swap" rel="stylesheet">
   <style>
@@ -13,6 +13,7 @@
     .font-body { font-family: 'Nunito', sans-serif; }
     @keyframes bounce-dice { 0%, 100% { transform: scale(1) rotate(0deg); } 25% { transform: scale(1.1) rotate(-5deg); } 50% { transform: scale(0.95) rotate(5deg); } 75% { transform: scale(1.05) rotate(-3deg); } }
     @keyframes slide-in { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
     .dice-rolling { animation: bounce-dice 0.5s ease-in-out; }
     .modal-setup { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 16px; animation: slide-in 0.3s ease-out; }
     .modal-content { background: linear-gradient(135deg, rgba(30, 58, 138, 0.98) 0%, rgba(55, 65, 81, 0.98) 100%); border: 3px solid rgba(255,255,255,0.3); border-radius: 24px; padding: 32px; max-width: 700px; width: 100%; max-height: 90vh; overflow-y: auto; animation: slide-in 0.4s ease-out; }
@@ -39,13 +40,14 @@
     .board-title { font-size: 18px; font-weight: bold; color: white; margin-bottom: 12px; }
     .board-container { flex: 1; overflow: auto; background: linear-gradient(135deg, rgba(15, 23, 42, 0.5) 0%, rgba(30, 27, 60, 0.5) 100%); border-radius: 12px; padding: 12px; }
     .route-grid { display: grid; grid-template-columns: repeat(9, 1fr); gap: 8px; auto-rows: auto; }
-    .station-cell { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 6px; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; text-align: center; }
-    .station-cell:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3); transform: scale(1.05); }
-    .station-cell.special { background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(239, 68, 68, 0.2)); border-color: rgba(251, 191, 36, 0.6); }
-    .station-num { font-size: 9px; color: #bfdbfe; font-weight: bold; }
-    .station-name { font-size: 8px; color: white; font-weight: bold; margin: 2px 0; line-height: 1; }
-    .station-icon { font-size: 14px; margin: 2px 0; }
-    .player-tokens { display: flex; gap: 2px; margin-top: 2px; justify-content: center; flex-wrap: wrap; }
+    .station-cell { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 6px; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; text-align: center; background-size: cover; background-position: center; }
+    .station-cell:hover { background-color: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3); transform: scale(1.05); }
+    .station-cell.special { border-color: rgba(251, 191, 36, 0.6); }
+    .station-cell::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(15, 23, 42, 0.7) 0%, rgba(30, 27, 60, 0.7) 100%); z-index: 1; }
+    .station-num { font-size: 9px; color: #bfdbfe; font-weight: bold; position: relative; z-index: 2; }
+    .station-name { font-size: 8px; color: white; font-weight: bold; margin: 2px 0; line-height: 1; position: relative; z-index: 2; }
+    .station-icon { font-size: 14px; margin: 2px 0; position: relative; z-index: 2; }
+    .player-tokens { display: flex; gap: 2px; margin-top: 2px; justify-content: center; flex-wrap: wrap; position: relative; z-index: 2; }
     .token-small { width: 12px; height: 12px; border-radius: 50%; border: 1px solid white; background-size: cover; background-position: center; }
     .turn-panel { background: linear-gradient(135deg, rgba(30, 58, 138, 0.5) 0%, rgba(55, 65, 81, 0.5) 100%); border: 2px solid rgba(255,255,255,0.2); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; max-height: 100%; overflow-y: auto; }
     .turn-header { text-align: center; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 2px solid rgba(255,255,255,0.1); }
@@ -204,10 +206,22 @@
     }
   </script>
   <div id="app" class="w-full h-full flex flex-col">
+   <div id="image-loader" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s;">
+    <div style="text-align: center;"><img src="https://media.giphy.com/media/l3q2K5jinAlZ5X1Uc/giphy.gif" alt="Loading" loading="lazy" style="width: 100px; height: 100px; object-fit: contain; margin-bottom: 16px;" onerror="console.error('Loader image failed'); this.style.display='none';">
+     <div style="color: white; font-weight: bold; font-size: 14px;">
+      Cargando imágenes...
+     </div>
+    </div>
+   </div>
    <div id="setup-modal" class="modal-setup">
     <div class="modal-content">
-     <div class="modal-title font-title">
-      🚌 Bienvenidos a Ruta Vitrasa
+     <div style="text-align: center; margin-bottom: 24px;"><img src="https://img.icons8.com/color/200/000000/bus.png" alt="Ruta Vitrasa" loading="lazy" style="width: 100px; height: 100px; object-fit: contain; margin-bottom: 12px; animation: bounce 2s infinite;" onerror="console.error('Logo failed'); this.style.display='none';">
+      <div class="modal-title font-title" style="margin: 0;">
+       Ruta Vitrasa
+      </div>
+      <div style="color: #86efac; font-size: 14px; margin-top: 8px;">
+       🌍 Red de Transporte
+      </div>
      </div>
      <div class="config-section">
       <div class="config-label">
@@ -271,7 +285,7 @@
         📊 Posiciones
        </div>
        <div id="scoreboard"></div>
-      </div><button id="end-turn-btn" class="btn-end-turn" onclick="endTurn()" disabled>✅ Finalizar Turno</button> <button class="btn-reset" onclick="resetGame()">🔄 Nueva Partida</button>
+      </div><button id="end-turn-btn" class="btn-end-turn" onclick="endTurn()" disabled>✅ Finalizar Turno</button> <button class="btn-reset" onclick="resetGame()">��� Nueva Partida</button>
      </div>
     </div>
    </div>
@@ -395,6 +409,7 @@
         const cell = document.createElement('div');
         cell.className = 'station-cell' + (isSpecial ? ' special' : '');
         cell.dataset.stationId = i - 1;
+        cell.style.backgroundImage = `url('${line.image}')`;
         cell.innerHTML = `
           <div class="station-num">#${i}</div>
           <div class="station-icon">${line.icon}</div>
@@ -609,7 +624,40 @@
       });
     }
 
+    function preloadImages() {
+      const loader = document.getElementById('image-loader');
+      loader.style.opacity = '1';
+      loader.style.pointerEvents = 'auto';
+
+      const allImages = new Set();
+      DATABASE.lines.forEach(line => allImages.add(line.image));
+      DATABASE.playerAvatars.forEach(avatar => allImages.add(avatar.image));
+
+      let loaded = 0;
+      const totalImages = allImages.size;
+
+      allImages.forEach(src => {
+        const img = new Image();
+        img.onload = () => {
+          loaded++;
+          if (loaded === totalImages) {
+            loader.style.opacity = '0';
+            loader.style.pointerEvents = 'none';
+          }
+        };
+        img.onerror = () => {
+          loaded++;
+          if (loaded === totalImages) {
+            loader.style.opacity = '0';
+            loader.style.pointerEvents = 'none';
+          }
+        };
+        img.src = src;
+      });
+    }
+
     selectPlayers(2);
+    preloadImages();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9cab2562906e0325',t:'MTc3MDU1MzkwNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9cb5870f823aa46e',t:'MTc3MDY2Mjc2Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
