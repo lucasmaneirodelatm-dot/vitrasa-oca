@@ -76,20 +76,20 @@
     .btn-reset { width: 100%; padding: 10px; background: rgba(239, 68, 68, 0.3); color: #fca5a5; font-weight: bold; border-radius: 8px; border: 2px solid rgba(239, 68, 68, 0.5); cursor: pointer; transition: all 0.3s; font-size: 12px; margin-top: 8px; }
     .btn-reset:hover { background: rgba(239, 68, 68, 0.4); border-color: rgba(239, 68, 68, 0.7); }
   </style>
-  <style>@view-transition { navigation: auto; }</style>
+  <script src="https://cdn.tailwindcss.com/3.4.17" type="text/javascript"></script>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
   <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
  </head>
  <body class="font-body bg-gradient-to-br from-blue-900 via-indigo-900 to-blue-800 overflow-hidden w-full h-full">
   <script>
-    // ========== BASE DE DATOS - 45 LÍNEAS + 18 EVENTOS ESPECIALES ==========
+    // ========== BASE DE DATOS - 45 LÍNEAS VITRASA REALES + 18 EVENTOS ESPECIALES ==========
     const DATABASE = {
       lines: [
         { name: '12A en H. Meixoeiro', icon: '🚍', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_webp/100.webp' },
         { name: '12B', icon: '🚌', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_webp/101.webp' },
         { name: '11 Traviesas', icon: '🚌', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_webp/102.webp' },
         { name: '10', icon: '🚌', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_webp/104.webp' },
-        { name: 'C1(pintor laxeiro)', icon: '🚌', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_webp/109.webp' },
+        { name: 'C1 (Pintor Laxeiro)', icon: '🚌', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_webp/109.webp' },
         { name: '11 en Avda. Florida', icon: '🚍', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_webp/112.webp' },
         { name: '25 Caeiro', icon: '🚏', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_webp/113.webp' },
         { name: 'Microbús Farola', icon: '🚏', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_webp/115.webp' },
@@ -98,38 +98,38 @@
         { name: '15C Pardavila', icon: '🚌', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_webp/119.webp' },
         { name: 'Articulado Pza. España', icon: '🚏', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/214.png' },
         { name: 'Híbrido Nuevo', icon: '🚌', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/210.png' },
-        { name: 'Hybrid (Servizos Mínimos)', icon: '🚍', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/215.png' },
-        { name: 'SOLARIS - Acesibilidad', icon: '🚌', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/222.png' },
-        { name: 'Despliege autobuses', icon: '🚏', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/226.png },
+        { name: 'Hybrid Servizos Mínimos', icon: '🚍', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/215.png' },
+        { name: 'SOLARIS - Accesibilidad', icon: '🚌', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/222.png' },
+        { name: 'Despliege Autobuses', icon: '🚏', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/226.png' },
         { name: 'Nuevos Autobuses VITRASA', icon: '🚍', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/236.png' },
         { name: 'BUS VITRASA', icon: '🚍', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/238.png' },
         { name: 'Nueva Flota 20 Buses', icon: '🆕', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/241.png' },
         { name: 'Nueva Flota 5 SOLARIS', icon: '🚍', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/242.png' },
         { name: '4 SOLARIS', icon: '🚌', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/246.png' },
-        { name: '27(hacia Rabadeira)', icon: '🚍', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/250.png' },
+        { name: '27 hacia Rabadeira', icon: '🚍', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/250.png' },
         { name: '15C', icon: '🚍', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/256.png' },
-        { name: '15A(en Pizarro)', icon: '🚌', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/257.png' },
+        { name: '15A en Pizarro', icon: '🚌', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/257.png' },
         { name: '5B', icon: '🚌', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/264.png' },
         { name: '5A', icon: '🚍', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/265.png' },
         { name: 'Cocheras', icon: '🏢', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/271.png' },
         { name: 'C3', icon: '🚍', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/272.png' },
-        { name: 'C3_SERVIZOS MINIMOS', icon: '🚍', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/279.png' },
+        { name: 'C3 Servizos Mínimos', icon: '🚍', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/279.png' },
         { name: 'CIRCULAR 2', icon: '🚌', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/281.png' },
         { name: 'C1', icon: '🚌', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/282.png' },
         { name: 'A', icon: '🚌', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/287.png' },
         { name: '31', icon: '🚍', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/294.png' },
         { name: 'VITRASA', icon: '🚍', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/295.png' },
-        { name: 'Casilla 35', icon: '🚌', image: null },
-        { name: 'Casilla 36', icon: '🚍', image: null },
-        { name: 'Casilla 37', icon: '🚌', image: null },
-        { name: 'Casilla 38', icon: '🚍', image: null },
-        { name: 'Casilla 39', icon: '🚌', image: null },
-        { name: 'Casilla 40', icon: '🚍', image: null },
-        { name: 'Casilla 41', icon: '🚌', image: null },
-        { name: 'Casilla 42', icon: '🚍', image: null },
-        { name: 'Casilla 43', icon: '🚌', image: null },
-        { name: 'Casilla 44', icon: '🚍', image: null },
-        { name: 'Casilla 45', icon: '🚌', image: null }
+        { name: 'Parada 35', icon: '🚌', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/295.png' },
+        { name: 'Parada 36', icon: '🚍', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/295.png' },
+        { name: 'Parada 37', icon: '🚌', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/295.png' },
+        { name: 'Parada 38', icon: '🚍', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/295.png' },
+        { name: 'Parada 39', icon: '🚌', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/295.png' },
+        { name: 'Parada 40', icon: '🚍', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/295.png' },
+        { name: 'Parada 41', icon: '🚌', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/295.png' },
+        { name: 'Parada 42', icon: '🚍', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/295.png' },
+        { name: 'Parada 43', icon: '🚌', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/295.png' },
+        { name: 'Parada 44', icon: '🚍', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/295.png' },
+        { name: 'Parada 45', icon: '🚌', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_png/295.png' }
       ],
       specialEvents: [
         { position: 2, type: 'bonus', jumps: 1, name: '🎫', message: 'Primer viaje! Avanzas 1' },
@@ -152,14 +152,14 @@
         { position: 63, type: 'final', name: '🏁', message: '¡Cocheras Vitrasa!' }
       ],
       playerAvatars: [
-        { emoji: '🚌', name: 'Autobús Clásico', image: 'https://images.unsplash.com/photo-1534948751033-0c4f9d6391b8?w=200&h=200&fit=crop' },
-        { emoji: '🚍', name: 'Bus Moderno', image: 'https://images.unsplash.com/photo-1544716278-ca5e3af4abd8?w=200&h=200&fit=crop' },
-        { emoji: '🚐', name: 'Microbus', image: 'https://images.unsplash.com/photo-1487180144351-b8472da7d491?w=200&h=200&fit=crop' },
-        { emoji: '🚛', name: 'Transporte', image: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=200&h=200&fit=crop' },
-        { emoji: '🚓', name: 'Emergencia', image: 'https://images.unsplash.com/photo-1494620502332-ae1bcf2b5dba?w=200&h=200&fit=crop' },
-        { emoji: '✈️', name: 'Aviación', image: 'https://images.unsplash.com/photo-1446941364317-29f91fcfe333?w=200&h=200&fit=crop' },
-        { emoji: '🚂', name: 'Ferrocarril', image: 'https://images.unsplash.com/photo-1487180144351-b8472da7d491?w=200&h=200&fit=crop' },
-        { emoji: '🚑', name: 'Ambulancia', image: 'https://images.unsplash.com/photo-1587280482051-921e6a9af914?w=200&h=200&fit=crop' }
+        { emoji: '🚌', name: 'L16', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_svg/400.svg' },
+        { emoji: '🚍', name: 'C1', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_svg/401.svg' },
+        { emoji: '🚌', name: 'Bus', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_svg/402.svg' },
+        { emoji: '🚍', name: 'VITRASA', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_svg/403.svg' },
+        { emoji: '🚌', name: 'Articulado Mín.', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_svg/404.svg' },
+        { emoji: '🚌', name: 'Autobús', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_svg/405.svg' },
+        { emoji: '🚍', name: '5B', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_svg/406.svg' },
+        { emoji: '🚌', name: 'VITRASA Bus', image: 'https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_svg/407.svg' }
       ],
       playerColors: ['#ef4444', '#3b82f6', '#22c55e', '#f59e0b', '#ec4899', '#06b6d4']
     };
@@ -207,7 +207,7 @@
   </script>
   <div id="app" class="w-full h-full flex flex-col">
    <div id="image-loader" style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s;">
-    <div style="text-align: center;"><img src="https://media.giphy.com/media/l3q2K5jinAlZ5X1Uc/giphy.gif" alt="Loading" loading="lazy" style="width: 100px; height: 100px; object-fit: contain; margin-bottom: 16px;" onerror="console.error('Loader image failed'); this.style.display='none';">
+    <div style="text-align: center;"><img src="https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_gif/600.gif" alt="Loading" loading="lazy" style="width: 100px; height: 100px; object-fit: contain; margin-bottom: 16px;" onerror="console.error('Loader image failed'); this.style.display='none';">
      <div style="color: white; font-weight: bold; font-size: 14px;">
       Cargando imágenes...
      </div>
@@ -215,7 +215,7 @@
    </div>
    <div id="setup-modal" class="modal-setup">
     <div class="modal-content">
-     <div style="text-align: center; margin-bottom: 24px;"><img src="https://img.icons8.com/color/200/000000/bus.png" alt="Ruta Vitrasa" loading="lazy" style="width: 100px; height: 100px; object-fit: contain; margin-bottom: 12px; animation: bounce 2s infinite;" onerror="console.error('Logo failed'); this.style.display='none';">
+     <div style="text-align: center; margin-bottom: 24px;"><img src="https://lucasmaneirodelatm-dot.github.io/vitrasa-oca/static/_avif/500.avif" alt="Ruta Vitrasa" loading="lazy" style="width: 100px; height: 100px; object-fit: contain; margin-bottom: 12px; animation: bounce 2s infinite;" onerror="console.error('Logo failed'); this.style.display='none';">
       <div class="modal-title font-title" style="margin: 0;">
        Ruta Vitrasa
       </div>
@@ -341,8 +341,11 @@
         DATABASE.playerAvatars.forEach((avatar, idx) => {
           const btn = document.createElement('div');
           btn.className = 'avatar-option' + (idx === 0 ? ' selected' : '');
-          btn.textContent = avatar.emoji;
+          btn.style.backgroundImage = `url('${avatar.image}')`;
+          btn.style.backgroundSize = 'cover';
+          btn.style.backgroundPosition = 'center';
           btn.dataset.emoji = avatar.emoji;
+          btn.dataset.image = avatar.image;
           btn.onclick = () => {
             document.querySelectorAll(`#avatars-${i} .avatar-option`).forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
@@ -379,6 +382,7 @@
           id: i,
           name: nameInput.value || `Pasajero ${i + 1}`,
           avatar: selectedAvatar.dataset.emoji,
+          avatarImage: selectedAvatar.dataset.image,
           color: selectedColor.dataset.color,
           position: 1
         });
@@ -442,9 +446,13 @@
     function updateDisplay() {
       const player = gameState.players[gameState.currentPlayer];
       const line = getLineInfo(player.position);
+      const avatarEl = document.getElementById('turn-avatar');
 
-      document.getElementById('turn-avatar').style.backgroundColor = player.color;
-      document.getElementById('turn-avatar').textContent = player.avatar;
+      avatarEl.style.backgroundColor = player.color;
+      avatarEl.style.backgroundImage = `url('${player.avatarImage}')`;
+      avatarEl.style.backgroundSize = 'cover';
+      avatarEl.style.backgroundPosition = 'center';
+      avatarEl.textContent = '';
       document.getElementById('turn-name').textContent = player.name;
       document.getElementById('turn-position').textContent = `Parada ${player.position}/63`;
       document.getElementById('turn-station').textContent = `📍 ${line.name}`;
@@ -458,7 +466,7 @@
       scoreboard.innerHTML = gameState.players
         .map((p, idx) => `
           <div class="scoreboard-item" style="border-color: ${p.color}; ${gameState.currentPlayer === idx ? 'background: rgba(255,255,255,0.15);' : ''}">
-            <div class="scoreboard-token" style="background-color: ${p.color};">${p.avatar}</div>
+            <div class="scoreboard-token" style="background-color: ${p.color}; background-image: url('${p.avatarImage}'); background-size: cover; background-position: center;">${p.avatar}</div>
             <div class="scoreboard-info">
               <div class="scoreboard-name">${p.name}</div>
               <div class="scoreboard-pos">${p.position}/63</div>
@@ -659,5 +667,5 @@
     selectPlayers(2);
     preloadImages();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9cb5870f823aa46e',t:'MTc3MDY2Mjc2Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9cce603682c4c905',t:'MTc3MDkyMzMxOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
